@@ -6,8 +6,9 @@ import pandas as pd
 BASE_PATH = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 DATA_PATH = os.path.join(BASE_PATH, "Data")
 
-def join_counties_to_craigslist_pddf(craigslist_pddf, json_path=os.path.join(DATA_PATH, "county_loc.json")):
-    county_list = load_counties(json_path)
+def join_counties_to_craigslist_pddf(craigslist_pddf, filename="county_loc.json")):
+    full_filepath = os.path.join(DATA_PATH, filename)
+    county_list = load_counties(full_filepath)
     geotagged_df = craigslist_pddf.loc[craigslist_pddf.post_has_geotag != "None"]
     geotagged_df['county'] = np.array(county_list)
     return geotagged_df

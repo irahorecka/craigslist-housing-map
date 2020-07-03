@@ -9,8 +9,9 @@ BASE_PATH = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 DATA_PATH = os.path.join(BASE_PATH, "Data")
 
 
-def clean_data(rel_filepath=os.path.join(DATA_PATH, "bigfile_geo.csv")):
-    import_data = read_csv(rel_filepath)
+def clean_data(filename="bigfile_geo.csv"):
+    full_filepath = os.path.join(DATA_PATH, filename)
+    import_data = read_csv(full_filepath)
     # chain func together for a cleaning pipeline
     cleaning_funcs = (
         rm_craigslist_repost_duplicates,
@@ -30,9 +31,9 @@ def clean_data(rel_filepath=os.path.join(DATA_PATH, "bigfile_geo.csv")):
     return import_data
 
 
-def read_csv(rel_filepath):
+def read_csv(csv_filepath):
     """Read input CSV and trim illegal chars in column."""
-    pd_csv = pd.read_csv(rel_filepath)
+    pd_csv = pd.read_csv(csv_filepath)
     pd_csv.columns = (
         pd_csv.columns.str.strip()
         .str.lower()
@@ -97,5 +98,5 @@ def rm_none_bedrooms(craigslist_pddf):
     return craigslist_pddf.loc[craigslist_pddf.bedrooms != "None"]
 
 
-def rm_outliers_price_per_area(df):
-    return df[(np.abs(stats.zscore(df.price_per_area)) < 0.2)]
+def rm_outliers_price_per_area(craigslist_pddf):
+    return craigslist_pddf[(np.abs(stats.zscore(craigslist_pddf.price_per_area)) < 0.2)]

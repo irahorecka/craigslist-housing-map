@@ -39,30 +39,3 @@ def get_request(geo_http):
 def write_utf_response_to_json(response_list):
     with open(os.path.join(DATA_PATH, "county_loc.json"), 'w') as outfile:
         json.dump(response_list, outfile)
-
-
-def get_ca_county(location):
-    try:
-        content = _input.decode("utf-8")
-        politics = json.loads(content)[0]["politics"]
-        #         print([politics[i] for i in range(len(politics)) if politics[i].get("friendly_type") == 'county'])
-        _politics = []
-        #         for i in range(len(politics)):
-        #             # filter only california
-        #             if politics[i].get("friendly_type") == "state":
-        #                 if politics[i].get('name') == 'California':
-        #                     pass
-        #                 else:
-        #                     return
-
-        county_json = [
-            politics[i]
-            for i in range(len(politics))
-            if politics[i].get("friendly_type") == "county"
-        ]
-        country_code = str(
-            county_json[0]["code"].replace("_", "")
-        )  # return county code from geo content
-        return country_code
-    except (TypeError, IndexError, json.JSONDecodeError) as error:  # Nonetype
-        return str(error)
