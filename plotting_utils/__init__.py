@@ -1,1 +1,1 @@
-from .ca_county_map import county_map, coord_map
+from .map import county_map, coord_map
