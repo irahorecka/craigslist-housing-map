@@ -10,3 +10,8 @@ A web application to display daily changes in Craigslist Housing posts in the Un
 ### Median USD per square foot by county
 
 ![County Map - Price/Area](Documentation/county_map.png)
+<hr>
+
+### Median USD per square foot by state
+
+![State Map - Price/Area](Documentation/state_map.png)

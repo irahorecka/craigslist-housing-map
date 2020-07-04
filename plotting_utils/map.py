@@ -9,29 +9,114 @@ import plotly.graph_objects as go
 BASE_PATH = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 DATA_PATH = os.path.join(BASE_PATH, "Data")
 
-scl = (
-    [0, "rgb(150,0,90)"],
-    [0.125, "rgb(0, 0, 200)"],
-    [0.25, "rgb(0, 25, 255)"],
-    [0.375, "rgb(0, 152, 255)"],
-    [0.5, "rgb(44, 255, 150)"],
-    [0.625, "rgb(151, 255, 0)"],
-    [0.75, "rgb(255, 234, 0)"],
-    [0.875, "rgb(255, 111, 0)"],
-    [1, "rgb(255, 0, 0)"],
-)
 
-rev_scl = [
-    (0, "rgb(255, 0, 0)"),
-    (0.125, "rgb(255, 111, 0)"),
-    (0.25, "rgb(255, 234, 0)"),
-    (0.375, "rgb(151, 255, 0)"),
-    (0.5, "rgb(44, 255, 150)"),
-    (0.625, "rgb(0, 152, 255)"),
-    (0.75, "rgb(0, 25, 255)"),
-    (0.875, "rgb(0, 0, 200)"),
-    (1, "rgb(150,0,90)"),
-]
+class colorScales:
+    scl = (
+        [0, "rgb(150,0,90)"],
+        [0.125, "rgb(0, 0, 200)"],
+        [0.25, "rgb(0, 25, 255)"],
+        [0.375, "rgb(0, 152, 255)"],
+        [0.5, "rgb(44, 255, 150)"],
+        [0.625, "rgb(151, 255, 0)"],
+        [0.75, "rgb(255, 234, 0)"],
+        [0.875, "rgb(255, 111, 0)"],
+        [1, "rgb(255, 0, 0)"],
+    )
+
+    rev_scl = [
+        (0, "rgb(255, 0, 0)"),
+        (0.125, "rgb(255, 111, 0)"),
+        (0.25, "rgb(255, 234, 0)"),
+        (0.375, "rgb(151, 255, 0)"),
+        (0.5, "rgb(44, 255, 150)"),
+        (0.625, "rgb(0, 152, 255)"),
+        (0.75, "rgb(0, 25, 255)"),
+        (0.875, "rgb(0, 0, 200)"),
+        (1, "rgb(150,0,90)"),
+    ]
+
+
+class stateJSON:
+    states_hash = {
+        "Alabama": "AL",
+        "Alaska": "AK",
+        "American_Samoa": "AS",
+        "Arizona": "AZ",
+        "Arkansas": "AR",
+        "California": "CA",
+        "Colorado": "CO",
+        "Connecticut": "CT",
+        "Delaware": "DE",
+        "District_Of_Columbia": "DC",
+        "Federated_States_Of_Micronesia": "FM",
+        "Florida": "FL",
+        "Georgia": "GA",
+        "Guam": "GU",
+        "Hawaii": "HI",
+        "Idaho": "ID",
+        "Illinois": "IL",
+        "Indiana": "IN",
+        "Iowa": "IA",
+        "Kansas": "KS",
+        "Kentucky": "KY",
+        "Louisiana": "LA",
+        "Maine": "ME",
+        "Marshall_Islands": "MH",
+        "Maryland": "MD",
+        "Massachusetts": "MA",
+        "Michigan": "MI",
+        "Minnesota": "MN",
+        "Mississippi": "MS",
+        "Missouri": "MO",
+        "Montana": "MT",
+        "Nebraska": "NE",
+        "Nevada": "NV",
+        "New_Hampshire": "NH",
+        "New_Jersey": "NJ",
+        "New_Mexico": "NM",
+        "New_York": "NY",
+        "North_Carolina": "NC",
+        "North_Dakota": "ND",
+        "Northern_Mariana_Islands": "MP",
+        "Ohio": "OH",
+        "Oklahoma": "OK",
+        "Oregon": "OR",
+        "Palau": "PW",
+        "Pennsylvania": "PA",
+        "Puerto_Rico": "PR",
+        "Rhode_Island": "RI",
+        "South_Carolina": "SC",
+        "South_Dakota": "SD",
+        "Tennessee": "TN",
+        "Texas": "TX",
+        "Utah": "UT",
+        "Vermont": "VT",
+        "Virgin_Islands": "VI",
+        "Virginia": "VA",
+        "Washington": "WA",
+        "West_Virginia": "WV",
+        "Wisconsin": "WI",
+        "Wyoming": "WY",
+    }
+
+
+def state_map(csv_path=os.path.join(DATA_PATH, "filtered.csv")):
+    state_data = pd.read_csv(csv_path)
+    state_data.state_or_country = state_data.state_or_country.str.title()
+    state_data["abbrv_state"] = state_data.state_or_country.map(stateJSON.states_hash)
+    state_data["price_per_area"] = state_data["price_per_area"].apply(
+        lambda x: round(x, 2)
+    )
+    state_group = state_data.groupby(["abbrv_state"]).median()
+    state_group.reset_index(level=0, inplace=True)
+
+    fig = px.choropleth(
+        locations=state_group["abbrv_state"],
+        locationmode="USA-states",
+        color=state_group["price_per_area"],
+        scope="usa",
+    )
+    fig.show()
 
 
 def county_map(csv_path=os.path.join(DATA_PATH, "filtered.csv")):
@@ -54,7 +139,7 @@ def county_map(csv_path=os.path.join(DATA_PATH, "filtered.csv")):
         geojson=counties,
         locations="county",
         color="price_per_area",
-        color_continuous_scale=rev_scl,  # curl and Rainbow are good
+        color_continuous_scale="Jet",  # curl and Rainbow are good
         range_color=(
             county_group.price_per_area.min(),
             county_group.price_per_area.max(),
@@ -84,7 +169,7 @@ def coord_map(csv_path=os.path.join(DATA_PATH, "filtered.csv")):
             text="$" + coord_data_truncated["price_per_area"].astype(str) + " USD/SqFt",
             marker=dict(
                 color=coord_data_truncated["price_per_area"],
-                colorscale=scl,
+                colorscale=colorScales.scl,
                 reversescale=True,
                 opacity=0.7,
                 size=4.0,

@@ -6,7 +6,7 @@ from data_utils import (
     link_geotag_to_counties,
     join_counties_to_craigslist_pddf,
 )
-from plotting_utils import county_map, coord_map
+from plotting_utils import county_map, coord_map, state_map
 
 BASE_PATH = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 DATA_PATH = os.path.join(BASE_PATH, "Data")
@@ -19,7 +19,7 @@ def main():
     # # link_geotag_to_counties(x)  # comment out if up to date json is est.
     # a = join_counties_to_craigslist_pddf(x)
     # a.to_csv(os.path.join(DATA_PATH, 'filtered.csv'))
-    coord_map()
+    state_map()
 
 
 if __name__ == "__main__":
