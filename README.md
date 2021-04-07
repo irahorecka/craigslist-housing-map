@@ -1,5 +1,5 @@
-# craigslistHousingDashboard
-A web application to display daily changes in Craigslist Housing posts in the United States.
+# craigslist-housing-map
+Map all Craigslist apartments and housing for rent in the United States. Just messing around.
 <hr>
 
 ### USD per square foot by ad listing
